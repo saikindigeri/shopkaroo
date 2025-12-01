@@ -36,9 +36,10 @@ export const loginUser = async (req, res) => {
       // Set httpOnly cookie (secure in production)
       res.cookie('jwt', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // true in production
-        sameSite: 'strict',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        secure: true, // true in production
+        sameSite: 'none',
+       maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',
       });
 
       // ALSO return user + token in response body (frontend needs this)
