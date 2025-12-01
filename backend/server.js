@@ -14,7 +14,7 @@ connectDB();
 
 const app = express();
 
-app.use(cors({ origin: 'https://shopkaroo-pdso.onrender.com', credentials: true }));
+app.use(cors({ origin: 'https://shopkaroo-coral.vercel.app', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
  
