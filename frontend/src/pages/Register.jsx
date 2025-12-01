@@ -1,7 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
-import toast from "react-hot-toast";
 
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -14,42 +13,23 @@ export default function Register() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    // Your real backend URL — works everywhere
-    const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
-
-    const res = await fetch(`${API_BASE}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // sends cookies if needed
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || "Registration failed");
+    try {
+      await api.post("/auth/register", form);
+      navigate("/login");
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || "Something went wrong. Try again."
+      );
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // Success
-    toast.success("Account created! Please log in.");
-    navigate("/login");
-
-  } catch (err) {
-    console.error("Register error:", err);
-    setError(err.message || "Something went wrong. Try again.");
-    toast.error(err.message || "Registration failed");
-  } finally {
-    setLoading(false);
-  }
-};
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-gray-50 to-gray-100 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8 sm:p-10">

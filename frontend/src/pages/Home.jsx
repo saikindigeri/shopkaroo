@@ -3,32 +3,20 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
-import toast from "react-hot-toast";
-// At the very top of your file (after imports)
-const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
+
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API_BASE}/products?limit=8`);
-      const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.message || "Failed to load");
-
-      setProducts(data.products || []);
-    } catch (err) {
-      toast.error("Failed to load products");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchProducts();
-}, []);
+  useEffect(() => {
+    api
+      .get("/products?limit=8")
+      .then((res) => {
+        setProducts(res.data.products || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   return (
     <div className="min-h-screen bg-white p-10">

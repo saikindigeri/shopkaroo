@@ -6,35 +6,35 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
 
-const API_BASE = import.meta.env.VITE_API_BASE
 export default function Checkout() {
   const { cart, totalPrice } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
- const placeOrder = async () => {
-  try {
-    setLoading(true)
-    const res = await fetch(`${API_BASE}/orders`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",  // ← sends login cookie
-      body: JSON.stringify({ items: cart, totalPrice }),
-    })
+  const placeOrder = async () => {
+    if (!user) {
+      toast.error("Please login first");
 
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.message || "Order failed")
+      navigate("/login");
+      return;
+    }
 
-    toast.success("Order placed!")
-    navigate(`/order/${data._id}`)
-  } catch (err) {
-    toast.error(err.message)
-    console.log("not working")
-  } finally {
-    setLoading(false)
-  }
-}
+    if (!cart.length) return;
+
+    try {
+      setLoading(true);
+      const res = await api.post("/orders", {
+        items: cart,
+        totalPrice,
+      });
+      navigate(`/order/${res.data._id}`);
+    } catch (err) {
+      alert("Order failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (cart.length === 0) {
     return (

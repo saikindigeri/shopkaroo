@@ -1,36 +1,23 @@
-/* eslint-disable no-unused-vars */
 import { createContext, useContext, useState, useEffect } from "react";
-
+import api from "../services/api";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
-const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  const navigate = useNavigate();
-  // Load user on app start
-
 
   const loadUser = async () => {
     try {
-      setLoading(true);
-      const res = await fetch(`${API_BASE}/auth/me`, {
-        method: "GET",
-        credentials: "include", // Critical: sends cookie
-      });
+      const res = await api.get("/auth/me");
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Not authenticated");
-
-      setUser(data.user || data); // adjust based on your backend
-      console.log("Logged in user:", data);
+      setUser(res.data);
+      console.log("Logged in user:", res.data);
     } catch (err) {
-      console.log("No user logged in");
+      console.error("Failed to load user:", err);
       setUser(null);
+      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
@@ -40,77 +27,33 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  // Login
   const login = async (email, password) => {
-    try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
+    const res = await api.post("/auth/login", { email, password });
+    localStorage.setItem("token", res.data.token);
+    toast.success("Login Success");
+    await loadUser();
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Login failed");
-
-      toast.success("Login successful!");
-      await loadUser();
-
-      // Merge guest cart if exists
-      const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
-      if (guestCart.length > 0) {
-        await fetch(`${API_BASE}/cart/merge`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ guestCart }),
-        });
-        localStorage.removeItem("guestCart");
-        toast.success("Your cart has been restored!");
-      }
-
-      navigate("/");
-    } catch (err) {
-      toast.error(err.message || "Login failed");
+    const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+    if (guestCart.length > 0) {
+      const mergeRes = await api.post("/cart/merge", { guestCart });
+      console.log("merge", mergeRes);
+      console.log("guest cart items", guestCart);
+      localStorage.removeItem("guestCart");
     }
+
+    await loadUser();
   };
 
-  // Register
   const register = async (name, email, password) => {
-    try {
-      const res = await fetch(`${API_BASE}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Registration failed");
-
-      toast.success("Account created! Please log in.");
-      navigate("/login");
-    } catch (err) {
-      toast.error(err.message || "Registration failed");
-    }
+    await api.post("/auth/register", { name, email, password });
+    toast.success("Registered Successfully");
+    await loadUser();
   };
 
-  // Logout
   const logout = async () => {
-    try {
-      await fetch(`${API_BASE}/auth/logout`, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      setUser(null);
-      toast.success("Logged out successfully");
-      navigate("/");
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
+    await api.get("/auth/logout");
+    toast.success("Logout Success");
+    setUser(null);
   };
 
   return (

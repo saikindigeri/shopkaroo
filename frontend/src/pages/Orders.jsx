@@ -10,42 +10,20 @@ export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   console.log("orderss", orders);
-
-
   useEffect(() => {
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-
-      // Manual backend URL — works everywhere
-      
-
-      const res = await fetch(`${API_BASE}/orders/myorders`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // THIS IS CRITICAL — sends your login cookie
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to load orders");
+    const fetchOrders = async () => {
+      try {
+        const res = await api.get("/orders/myorders");
+        setOrders(res.data.orders || []);
+      } catch (err) {
+        toast.error("Failed to load orders");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setOrders(data.orders || []);
-      toast.success("Orders loaded successfully");
-    } catch (err) {
-      console.error("Orders error:", err);
-      toast.error(err.message || "Failed to load orders");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchOrders();
-}, []);
+    fetchOrders();
+  }, []);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
