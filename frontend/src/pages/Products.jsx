@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
+import toast from "react-hot-toast";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -16,29 +17,50 @@ export default function Products() {
     page: 1,
   });
 
-  useEffect(() => {
-    const query = new URLSearchParams({
-      search: filters.search,
-      category: filters.category === "All" ? "" : filters.category,
-      size: filters.size,
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
-      page: filters.page,
-      limit: 12,
-    }).toString();
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true);
-    api
-      .get(`/products?${query}`)
-      .then((res) => {
-        setProducts(res.data.products || []);
-        setTotal(res.data.total || res.data.products.length);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [filters]);
+      // Your real backend URL — works everywhere
+      const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
 
+      const query = new URLSearchParams({
+        search: filters.search,
+        category: filters.category === "All" ? "" : filters.category,
+        size: filters.size,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        page: filters.page,
+        limit: 12,
+      }).toString();
+
+      const res = await fetch(`${API_BASE}/products?${query}`, {
+        method: "GET",
+        credentials: "include", // sends login cookie if needed
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to load products");
+      }
+
+      setProducts(data.products || []);
+      setTotal(data.total || data.products.length || 0);
+
+    } catch (err) {
+      console.error("Products fetch error:", err);
+      toast.error("Failed to load products");
+      setProducts([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, [filters]);
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value, page: 1 });
   };

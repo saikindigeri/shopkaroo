@@ -1,17 +1,51 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import { useCart } from "../context/CartContext";
+import toast from "react-hot-toast";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [size, setSize] = useState("");
+  const [loading, setLoading] = useState(false);
   const { addToCart } = useCart();
+const navigate=useNavigate()
+useEffect(() => {
+  const fetchProduct = async () => {
+    if (!id) return; // safety
 
-  useEffect(() => {
-    api.get(`/products/${id}`).then((res) => setProduct(res.data));
-  }, [id]);
+    try {
+      setLoading(true);
+
+      // Your real backend URL — works everywhere
+      const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
+
+      const res = await fetch(`${API_BASE}/products/${id}`, {
+        method: "GET",
+        credentials: "include", // sends login cookie if needed
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Product not found");
+      }
+
+      setProduct(data); // or data.product depending on your backend response
+      // setProduct(data.product); // ← if backend returns { product: {...} }
+
+    } catch (err) {
+      console.error("Error loading product:", err);
+      toast.error(err.message || "Failed to load product");
+     
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProduct();
+}, [id, navigate]); // include navigate if using it
 
   if (!product) return <div className="text-center py-20">Loading...</div>;
 

@@ -14,9 +14,10 @@ import Orders from "./pages/Orders";
 
 export default function App() {
   return (
+     <BrowserRouter>
     <AuthProvider>
       <CartProvider>
-        <BrowserRouter>
+       
           <div className="min-h-screen bg-gray-50">
             <Navbar />
             <Routes>
@@ -32,8 +33,8 @@ export default function App() {
               <Route path="/register" element={<Register />} />
             </Routes>
           </div>
-        </BrowserRouter>
+        
       </CartProvider>
-    </AuthProvider>
+    </AuthProvider></BrowserRouter>
   );
 }

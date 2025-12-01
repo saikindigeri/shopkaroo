@@ -4,25 +4,48 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
-
+// At the very top of your file (after imports)
+const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   console.log("orderss", orders);
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await api.get("/orders/myorders");
-        setOrders(res.data.orders || []);
-      } catch (err) {
-        toast.error("Failed to load orders");
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchOrders();
-  }, []);
+
+  useEffect(() => {
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+
+      // Manual backend URL — works everywhere
+      
+
+      const res = await fetch(`${API_BASE}/orders/myorders`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // THIS IS CRITICAL — sends your login cookie
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to load orders");
+      }
+
+      setOrders(data.orders || []);
+      toast.success("Orders loaded successfully");
+    } catch (err) {
+      console.error("Orders error:", err);
+      toast.error(err.message || "Failed to load orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchOrders();
+}, []);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
