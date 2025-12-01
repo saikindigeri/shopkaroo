@@ -1,13 +1,24 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-// https://vite.dev/config/
+
+// Remove this line completely:
+// import tailwindcss from '@tailwindcss/vite'  ← DOES NOT EXIST!
+
 export default defineConfig({
-  plugins: [react(), tailwindcss(),],
-   server: {
+  plugins: [react()],  // Only React plugin here
+
+  server: {
     port: 5173,
     proxy: {
-      '/api': 'http://localhost:5000'
+      '/api': {
+        target: 'https://shopkaroo-pdso.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      }
     }
-  }
+  },
+
+  // This makes sure assets (images, fonts) work on Vercel
+  base: '/',
 })
