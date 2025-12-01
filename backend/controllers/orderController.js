@@ -1,9 +1,4 @@
-import Order from '../models/Order.js';
-import Cart from '../models/Cart.js';
-import User from '../models/User.js';
-import sendOrderEmail from '../utils/sendEmail.js';
 
-// controllers/orderController.js
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import User from '../models/User.js';
@@ -30,9 +25,9 @@ export const createOrder = async (req, res) => {
     const order = await Order.create({
       user: req.user.id,
       items: items.map(item => ({
-        product: item.product._id || item.product,  // ← handle both cases
-        name: item.product.name,
-        image: item.product.image,
+        product: item.product?._id || item.product,
+        name: item.name || item.product?.name,
+        image: item.image || item.product?.image,
         price: item.price,
         size: item.size,
         qty: item.qty,
@@ -43,24 +38,27 @@ export const createOrder = async (req, res) => {
     // 4. Clear user's cart
     await Cart.findOneAndUpdate(
       { user: req.user.id },
-      { $set: { items: [] } },  // ← use $set
+      { $set: { items: [] } },
       { upsert: true }
     );
 
-    // 5. Send email (wrap in try-catch — email failure shouldn't break order)
+    // 5. Send email (non-blocking)
     try {
       const user = await User.findById(req.user.id);
       if (user && user.email) {
-        await sendOrderEmail(order, user);
+        sendOrderEmail(order, user).catch((emailErr) => {
+          console.error("Email failed (but order was created):", emailErr);
+        });
       }
     } catch (emailErr) {
-      console.error("Email failed (but order was created):", emailErr);
-      // Don't throw — order already created
+      console.error("Email lookup failed (but order was created):", emailErr);
     }
 
     // 6. Success
     res.status(201).json({
       success: true,
+     
+      _id: order._id,
       order,
       message: "Order placed successfully",
     });
@@ -74,6 +72,7 @@ export const createOrder = async (req, res) => {
     });
   }
 };
+
 
 export const getMyOrders = async (req, res) => {
   try {
