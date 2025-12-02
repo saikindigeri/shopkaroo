@@ -40,12 +40,12 @@ export default function Home() {
             Timeless pieces crafted with precision and passion.
           </p>
 
-          <a
+          <Link
             href="/products"
             className="inline-block mt-12 px-12 py-5 border-2 border-white text-white font-semibold uppercase tracking-[0.25em] text-sm hover:bg-white hover:text-black transition-all duration-300"
           >
             Shop Now
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -76,12 +76,12 @@ export default function Home() {
 
         {!loading && products.length > 0 && (
           <div className="text-center mt-20 sm:mt-24">
-            <a
+            <Link
               href="/products"
               className="inline-block px-10 py-4 border-2 border-black text-black font-medium uppercase tracking-[0.25em] text-sm hover:bg-black hover:text-white transition-all duration-300"
             >
               View All Products
-            </a>
+            </Link>
           </div>
         )}
       </section>
