@@ -12,6 +12,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+
   const placeOrder = async () => {
     if (!user) {
       toast.error("Please login first");
@@ -21,11 +22,20 @@ export default function Checkout() {
     }
 
     if (!cart.length) return;
+  const orderItems = cart.map((item) => ({
+    product: item.product._id || item.product,
+    name: item.name,
+    image: item.image || item.product?.image,
+    price: item.price,
+    size: item.size,
+    qty: item.qty,
+  }));
+
 
     try {
       setLoading(true);
       const res = await api.post("/orders", {
-        items: cart,
+        items: orderItems,
         totalPrice,
       });
       navigate(`/order/${res.data._id}`);
