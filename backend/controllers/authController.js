@@ -33,21 +33,22 @@ export const loginUser = async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = generateToken(user._id);
 
-      // Set httpOnly cookie (secure in production)
+      
       res.cookie('jwt', token, {
         httpOnly: true,
-        secure: true, // true in production
+        secure: true, 
         sameSite: 'none',
        maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',
       });
 
-      // ALSO return user + token in response body (frontend needs this)
+      console.log("login done from backend")
+     
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        token, // This is important!
+        token, 
       });
     } else {
       return res.status(401).json({ message: 'Invalid email or password' });

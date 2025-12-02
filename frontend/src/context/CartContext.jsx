@@ -5,7 +5,7 @@ import api from "../services/api";
 import { useAuth } from "./AuthContext";
 import { toast } from "react-hot-toast";
 const CartContext = createContext();
-const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
+
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 

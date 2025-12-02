@@ -1,32 +1,32 @@
-import { useState } from 'react'
-import { useAuth } from '../context/AuthContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { login } = useAuth()
-  const navigate = useNavigate()
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
-      await login(form.email, form.password)
-      navigate('/')
+      await login(form.email, form.password);
+      navigate("/");
     } catch (err) {
-      setError(err?.message || 'Invalid email or password')
+      setError(err?.message || "Invalid email or password");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-gray-50 to-gray-100 px-4">
@@ -89,13 +89,13 @@ export default function Login() {
                        tracking-[0.2em] uppercase hover:bg-gray-900 transition-colors
                        disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? 'Logging in…' : 'Login'}
+            {loading ? "Logging in…" : "Login"}
           </button>
         </form>
 
         {/* Footer */}
         <p className="mt-6 text-center text-xs sm:text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?{" "}
           <Link
             to="/register"
             className="font-medium underline underline-offset-4 hover:text-black"
@@ -105,5 +105,5 @@ export default function Login() {
         </p>
       </div>
     </div>
-  )
+  );
 }

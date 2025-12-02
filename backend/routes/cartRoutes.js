@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/',protect, getCart);
 router.post('/add',protect, addToCart);
-
+//router.post('/merge', protect, mergeCart);
 router.put('/update', protect, updateCartItem);
 router.delete('/remove', protect, removeFromCart);
 router.post('/merge', protect, mergeCart) 

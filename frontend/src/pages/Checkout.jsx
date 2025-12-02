@@ -145,7 +145,7 @@ export default function Checkout() {
             <p className="mt-3 text-[11px] sm:text-xs text-gray-500 leading-relaxed">
               By placing this order, you agree to our Terms &amp; Conditions and
               Privacy Policy. A confirmation email will be sent to your
-              registered email address.
+              registered email address. ddddddddddddddd
             </p>
           </aside>
         </div>

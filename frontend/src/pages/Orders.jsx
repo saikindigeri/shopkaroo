@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
-// At the very top of your file (after imports)
-const API_BASE = "https://shopkaroo-pdso.onrender.com/api";
+
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +13,7 @@ export default function Orders() {
     const fetchOrders = async () => {
       try {
         const res = await api.get("/orders/myorders");
+       console.log("orders fetched successfully",res)
         setOrders(res.data.orders || []);
       } catch (err) {
         toast.error("Failed to load orders");
