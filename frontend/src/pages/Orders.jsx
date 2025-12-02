@@ -142,7 +142,7 @@ export default function Orders() {
         <div className="text-center mt-16">
           <Link
             to="/products"
-            className="inline-block px-14 py-5 border-2 border-black text-white font-medium uppercase tracking-wider text-sm hover:bg-yellow-400 hover:text-white transition-all duration-300"
+            className="inline-block px-14 py-5 border-2 border-black text-white bg-black font-medium uppercase tracking-wider text-sm hover:bg-yellow-400 hover:text-white transition-all duration-300"
           >
             Continue Shopping
           </Link>
