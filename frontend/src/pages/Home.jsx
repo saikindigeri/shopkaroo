@@ -97,7 +97,7 @@ export default function Home() {
 
   <a
     href="/products"
-    className="inline-block mt-10 px-10 py-4 border border-white rounded-full text-sm tracking-[0.25em] uppercase font-medium  hover:bg-black hover:text-white transition-all duration-300"
+    className="inline-block mt-10 px-10 py-4 border border-black rounded-full text-sm tracking-[0.25em] uppercase font-medium  hover:bg-black hover:text-white transition-all duration-300"
   >
     Explore Collection
   </a>
