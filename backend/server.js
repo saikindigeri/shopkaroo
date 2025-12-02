@@ -20,7 +20,10 @@ const allowedOrigins = [
 ]
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: [
+      "https://shopkaroo-yvrg.vercel.app",
+      "http://localhost:5173"
+    ],
     credentials: true,
   })
 );
