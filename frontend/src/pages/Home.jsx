@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -41,7 +42,7 @@ export default function Home() {
           </p>
 
           <Link
-            href="/products"
+            to="/products"
             className="inline-block mt-12 px-12 py-5 border-2 border-white text-white font-semibold uppercase tracking-[0.25em] text-sm hover:bg-white hover:text-black transition-all duration-300"
           >
             Shop Now
@@ -77,7 +78,7 @@ export default function Home() {
         {!loading && products.length > 0 && (
           <div className="text-center mt-20 sm:mt-24">
             <Link
-              href="/products"
+              to="/products"
               className="inline-block px-10 py-4 border-2 border-black text-black font-medium uppercase tracking-[0.25em] text-sm hover:bg-black hover:text-white transition-all duration-300"
             >
               View All Products
@@ -95,12 +96,12 @@ export default function Home() {
     Discover premium fashion designed for comfort, confidence, and everyday elegance.
   </p>
 
-  <a
-    href="/products"
+  <Link
+    to="/products"
     className="inline-block mt-10 px-10 py-4 border border-black rounded-full text-sm tracking-[0.25em] uppercase font-medium  hover:bg-black hover:text-white transition-all duration-300"
   >
     Explore Collection
-  </a>
+  </Link>
 
   <p className="mt-10 text-xs opacity-70 tracking-wider">
     © {new Date().getFullYear()} ShopKaroo — All Rights Reserved
